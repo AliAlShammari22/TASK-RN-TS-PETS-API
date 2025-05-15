@@ -6,13 +6,23 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
-import pets from "@/data/pets";
 import PetItem from "./PetItem";
+import { getAllpets } from "@/api/pets";
 
 const PetList = () => {
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
-  const [displayPets, setDisplayPets] = useState(pets);
+
+  const [displayPets, setDisplayPets] = useState<any[]>([]);
+
+  const handleLoadedPets = async () => {
+    const data = await getAllpets();
+    setDisplayPets(data);
+  };
+
+  if (displayPets.length === 0) {
+    handleLoadedPets();
+  }
 
   const petList = displayPets
     .filter((pet) => pet.name.toLowerCase().includes(search.toLowerCase()))

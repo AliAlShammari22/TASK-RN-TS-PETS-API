@@ -1,16 +1,30 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { useLocalSearchParams } from "expo-router";
-import pets from "@/data/pets";
+import { getPetsId } from "@/api/pets";
 
-const PetDetails = () => {
-  const { petId } = useLocalSearchParams();
-  const pet = pets[0];
+export default function PetDetails() {
+  const { petId } = useLocalSearchParams<{ petId: string }>();
+
+  const [pet, setPet] = useState<any>(null);
+  const [hasLoaded, setHasLoaded] = useState(false);
+
+  if (!hasLoaded && petId) {
+    getPetsId(petId)
+      .then((data) => setPet(data))
+      .catch((err) => console.error("Failed to load pet:", err));
+    setHasLoaded(true);
+  }
+
+  if (!pet) {
+    return <Text style={styles.name}>Loading…</Text>;
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.name}>{pet.name}</Text>
       <Image source={{ uri: pet.image }} style={styles.image} />
-      <Text style={styles.description}> {pet.description}</Text>
+      <Text style={styles.description}>{pet.description}</Text>
       <Text style={styles.type}>Type: {pet.type}</Text>
 
       <View>
@@ -20,9 +34,7 @@ const PetDetails = () => {
       </View>
     </View>
   );
-};
-
-export default PetDetails;
+}
 
 const styles = StyleSheet.create({
   container: {
