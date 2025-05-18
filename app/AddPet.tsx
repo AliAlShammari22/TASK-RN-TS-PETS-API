@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { postPet } from "@/api/pets";
+import { useMutation } from "@tanstack/react-query";
 
 const AddPet = () => {
   const [name, setName] = useState("");
@@ -16,11 +17,19 @@ const AddPet = () => {
   const [type, setType] = useState("");
   const [image, setImage] = useState("");
 
-  const handlecreatepet = async () => {
-    // console.log("New pet", { name, adopted, type, image });
-    const data = await postPet(name, type, image, adopted);
-    console.log(data);
-  };
+  const { mutate, data } = useMutation({
+    mutationKey: ["addPet"],
+    mutationFn: () => postPet(name, type, image, adopted),
+    onSuccess: () => {
+      alert("New Todo added");
+    },
+  });
+
+  // const handlecreatepet = async () => {
+  //   console.log("New pet", { name, adopted, type, image });
+  //   const data = await postPet(name, type, image, adopted);
+  //   console.log(data);
+  // };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add Your Pet! </Text>
@@ -45,12 +54,7 @@ const AddPet = () => {
       />
       <TextInput placeholder="Adopted" style={styles.input} />
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          handlecreatepet();
-        }}
-      >
+      <TouchableOpacity style={styles.button} onPress={() => mutate()}>
         <Text style={styles.buttonText}>Add Pet</Text>
       </TouchableOpacity>
     </View>

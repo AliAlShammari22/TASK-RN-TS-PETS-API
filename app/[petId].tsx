@@ -3,10 +3,14 @@ import React, { useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { getPetsId } from "@/api/pets";
 
+interface PetList {
+  name: string;
+}
+
 export default function PetDetails() {
   const { petId } = useLocalSearchParams<{ petId: string }>();
 
-  const [pet, setPet] = useState<any>(null);
+  const [pet, setPet] = useState<PetList[]>([]);
   const [hasLoaded, setHasLoaded] = useState(false);
 
   if (!hasLoaded && petId) {
