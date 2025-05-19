@@ -17,11 +17,11 @@ const AddPet = () => {
   const [type, setType] = useState("");
   const [image, setImage] = useState("");
 
-  const { mutate, data } = useMutation({
+  const { mutate } = useMutation({
     mutationKey: ["addPet"],
     mutationFn: () => postPet(name, type, image, adopted),
     onSuccess: () => {
-      alert("New Todo added");
+      alert("New Pets added");
     },
   });
 

@@ -1,35 +1,45 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TextComponent,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { getPetsId } from "@/api/pets";
-
-interface PetList {
-  name: string;
-}
+import { useQuery } from "@tanstack/react-query";
 
 export default function PetDetails() {
   const { petId } = useLocalSearchParams<{ petId: string }>();
 
-  const [pet, setPet] = useState<PetList[]>([]);
-  const [hasLoaded, setHasLoaded] = useState(false);
+  // const [pet, setPet] = useState<any>(null);
+  // const [hasLoaded, setHasLoaded] = useState(false);
 
-  if (!hasLoaded && petId) {
-    getPetsId(petId)
-      .then((data) => setPet(data))
-      .catch((err) => console.error("Failed to load pet:", err));
-    setHasLoaded(true);
-  }
+  // if (!hasLoaded && petId) {
+  //   getPetsId(petId)
+  //     .then((data) => setPet(data))
+  //     .catch((err) => console.error("Failed to load pet:", err));
+  //   setHasLoaded(true);
+  // }
 
-  if (!pet) {
-    return <Text style={styles.name}>Loading…</Text>;
-  }
+  // if (!pet) {
+  //   return <Text style={styles.name}>Loading…</Text>;
+  // }
+  const { data, isFetching } = useQuery({
+    queryKey: ["getPetsId"],
+    queryFn: () => getPetsId(petId),
+  });
+  if (isFetching) return <ActivityIndicator size="large" />;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.name}>{pet.name}</Text>
-      <Image source={{ uri: pet.image }} style={styles.image} />
-      <Text style={styles.description}>{pet.description}</Text>
-      <Text style={styles.type}>Type: {pet.type}</Text>
+      <Text style={styles.name}>{data.name}</Text>
+      <Image source={{ uri: data.image }} style={styles.image} />
+      <Text style={styles.description}>{data.description}</Text>
+      <Text style={styles.type}>Type: {data.type}</Text>
 
       <View>
         <TouchableOpacity style={styles.button}>
