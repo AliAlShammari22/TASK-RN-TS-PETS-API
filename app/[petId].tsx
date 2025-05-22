@@ -9,11 +9,23 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { useLocalSearchParams } from "expo-router";
-import { getPetsId } from "@/api/pets";
-import { useQuery } from "@tanstack/react-query";
+import { deletePet, getPetsId } from "@/api/pets";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export default function PetDetails() {
   const { petId } = useLocalSearchParams<{ petId: string }>();
+
+  const { mutate } = useMutation({
+    mutationKey: ["deletePet"],
+    mutationFn: () => deletePet(petId),
+    onSuccess: () => {
+      alert("Pet Deleted!");
+    },
+  });
+
+  const handleDeletePet = () => {
+    mutate();
+  };
 
   // const [pet, setPet] = useState<any>(null);
   // const [hasLoaded, setHasLoaded] = useState(false);
@@ -28,11 +40,11 @@ export default function PetDetails() {
   // if (!pet) {
   //   return <Text style={styles.name}>Loading…</Text>;
   // }
-  const { data, isFetching } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["getPetsId"],
     queryFn: () => getPetsId(petId),
   });
-  if (isFetching) return <ActivityIndicator size="large" />;
+  if (isLoading) return <ActivityIndicator size="large" />;
 
   return (
     <View style={styles.container}>
@@ -42,7 +54,7 @@ export default function PetDetails() {
       <Text style={styles.type}>Type: {data.type}</Text>
 
       <View>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleDeletePet}>
           <Text style={styles.buttonText}>Delete</Text>
         </TouchableOpacity>
       </View>

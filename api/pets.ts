@@ -25,4 +25,9 @@ const postPet = async (
   return response.data;
 };
 
-export { getAllpets, getPetsId, postPet };
+const deletePet = async (id: string) => {
+  const response = await instance.delete(`/pets/${id}`);
+  return response.data;
+};
+
+export { getAllpets, getPetsId, postPet, deletePet };

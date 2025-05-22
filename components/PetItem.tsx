@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { Link } from "expo-router";
+import { useMutation } from "@tanstack/react-query";
+import { deletePet } from "@/api/pets";
 
 interface PetItemProps {
   pet: {
@@ -24,6 +26,16 @@ interface PetItemProps {
 
 const PetItem = ({ pet, setDisplayPets, displayPets }: PetItemProps) => {
   const [image, setImage] = useState(pet.image);
+
+  const { mutate, data } = useMutation({
+    mutationKey: ["deletePet"],
+    mutationFn: deletePet,
+  });
+
+  const handleDeletePet = () => {
+    mutate;
+  };
+
   return (
     <Link href={`/${pet.id}`} asChild>
       <Pressable style={styles.container}>
@@ -45,9 +57,7 @@ const PetItem = ({ pet, setDisplayPets, displayPets }: PetItemProps) => {
 
           <TouchableOpacity
             style={styles.adoptButton}
-            onPress={() => {
-              setDisplayPets(displayPets.filter((p) => p.id !== pet.id));
-            }}
+            onPress={handleDeletePet}
           >
             <Text style={styles.buttonText}>Adopt</Text>
           </TouchableOpacity>
